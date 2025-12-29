@@ -2,397 +2,105 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Prediction API</title>
+    <title>Sales Forecaster Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-        }
-        
-        h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-        
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-        }
-        
-        h2 {
-            color: #764ba2;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-        
-        .endpoint {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        
-        .method {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.85em;
-            margin-right: 10px;
-        }
-        
-        .method.get {
-            background: #28a745;
-            color: white;
-        }
-        
-        .method.post {
-            background: #007bff;
-            color: white;
-        }
-        
-        .path {
-            font-family: 'Courier New', monospace;
-            color: #764ba2;
-            font-weight: bold;
-        }
-        
-        pre {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            margin: 10px 0;
-        }
-        
-        code {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-        
-        .description {
-            margin: 10px 0;
-            color: #555;
-        }
-        
-        .test-section {
-            background: #e3f2fd;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
-        
-        .btn {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            margin-top: 10px;
-        }
-        
-        .btn:hover {
-            background: #764ba2;
-        }
-        
-        #testResult {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 4px;
-            display: none;
-        }
-        
-        .success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-        
-        .error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-        
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        th {
-            background: #667eea;
-            color: white;
-            font-weight: bold;
-        }
-        
-        tr:hover {
-            background: #f5f5f5;
-        }
+        :root { --primary: #6366f1; --bg: #f8fafc; --glass: rgba(255, 255, 255, 0.9); }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: var(--glass); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; width: 100%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 5px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: white; font-size: 1rem; }
+        .btn { width: 100%; background: var(--primary); color: white; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        #result { margin-top: 25px; padding: 20px; border-radius: 12px; display: none; text-align: center; background: #f1f5f9; }
+        .sales-val { font-size: 2rem; color: var(--primary); font-weight: 800; display: block; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🛒 Sales Prediction API</h1>
-        <p class="subtitle">Machine Learning API for retail sales forecasting</p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-            <a href="/predict-ui" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1em; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: transform 0.3s ease;">
-                ✨ Try Interactive Prediction Tool
-            </a>
+    <div class="card">
+        <h2 style="text-align:center; margin-bottom:30px;"><i class="fas fa-chart-line"></i> Sales Predictor</h2>
+        <form id="predictionForm">
+            <div class="input-group">
+                <label>Store ID</label>
+                <input type="text" id="Store_id" placeholder="e.g., 253" required>
+            </div>
+            <div class="grid">
+                <div class="input-group">
+                    <label>Store Type</label>
+                    <select id="Store_Type">
+                        <option value="S1">S1 (Standard)</option><option value="S2">S2 (Express)</option>
+                        <option value="S3">S3 (Super)</option><option value="S4">S4 (Mega)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Location</label>
+                    <select id="Location_Type">
+                        <option value="L1">L1</option><option value="L2">L2</option>
+                        <option value="L3">L3</option><option value="L4">L4</option><option value="L5">L5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="input-group">
+                    <label>Region</label>
+                    <select id="Region_Code">
+                        <option value="R1">R1</option><option value="R2">R2</option>
+                        <option value="R3">R3</option><option value="R4">R4</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="Date" required>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="input-group">
+                    <label>Holiday?</label>
+                    <select id="Holiday"><option value="0">No</option><option value="1">Yes</option></select>
+                </div>
+                <div class="input-group">
+                    <label>Discount?</label>
+                    <select id="Discount"><option value="0">No</option><option value="1">Yes</option></select>
+                </div>
+            </div>
+            <button type="submit" class="btn">Calculate Prediction</button>
+        </form>
+        <div id="result">
+            <span style="font-size:0.9rem; color:#64748b;">Estimated Daily Sales</span>
+            <span class="sales-val" id="salesVal">₹0.00</span>
         </div>
-        
-        <h2>📋 API Endpoints</h2>
-        
-        <div class="endpoint">
-            <span class="method get">GET</span>
-            <span class="path">/health</span>
-            <p class="description">Health check endpoint to verify API status and model availability.</p>
-            <p><strong>Response:</strong></p>
-            <pre><code>{
-  "status": "healthy",
-  "message": "API is running",
-  "model_loaded": true
-}</code></pre>
-        </div>
-        
-        <div class="endpoint">
-            <span class="method post">POST</span>
-            <span class="path">/predict</span>
-            <p class="description">Predict sales for a single record.</p>
-            <p><strong>Request Body:</strong></p>
-            <pre><code>{
-  "Store_id": "S001",
-  "Store_Type": "A",
-  "Location_Type": "Urban",
-  "Region_Code": 1,
-  "Date": "2024-01-15",
-  "Holiday": 0,
-  "Discount": 1
-}</code></pre>
-            <p><strong>Response:</strong></p>
-            <pre><code>{
-  "success": true,
-  "prediction": {
-    "sales": 1234.56,
-    "store_id": "S001",
-    "date": "2024-01-15"
-  },
-  "input_data": { ... }
-}</code></pre>
-        </div>
-        
-        <div class="endpoint">
-            <span class="method post">POST</span>
-            <span class="path">/predict/batch</span>
-            <p class="description">Predict sales for multiple records at once.</p>
-            <p><strong>Request Body:</strong></p>
-            <pre><code>{
-  "data": [
-    {
-      "Store_id": "S001",
-      "Store_Type": "A",
-      "Location_Type": "Urban",
-      "Region_Code": 1,
-      "Date": "2024-01-15",
-      "Holiday": 0,
-      "Discount": 1
-    },
-    {
-      "Store_id": "S002",
-      "Store_Type": "B",
-      "Location_Type": "Rural",
-      "Region_Code": 2,
-      "Date": "2024-01-15",
-      "Holiday": 0,
-      "Discount": 0
-    }
-  ]
-}</code></pre>
-            <p><strong>Response:</strong></p>
-            <pre><code>{
-  "success": true,
-  "count": 2,
-  "predictions": [
-    {
-      "sales": 1234.56,
-      "store_id": "S001",
-      "date": "2024-01-15"
-    },
-    {
-      "sales": 987.65,
-      "store_id": "S002",
-      "date": "2024-01-15"
-    }
-  ]
-}</code></pre>
-        </div>
-        
-        <div class="endpoint">
-            <span class="method post">POST</span>
-            <span class="path">/predict/csv</span>
-            <p class="description">Upload a CSV file and get predictions for all records.</p>
-            <p><strong>Request:</strong> Form-data with file upload (key: "file")</p>
-            <p><strong>CSV Format:</strong></p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Column</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Store_id</td>
-                        <td>string</td>
-                        <td>Store identifier</td>
-                    </tr>
-                    <tr>
-                        <td>Store_Type</td>
-                        <td>string</td>
-                        <td>Type of store (A, B, C, etc.)</td>
-                    </tr>
-                    <tr>
-                        <td>Location_Type</td>
-                        <td>string</td>
-                        <td>Urban, Rural, etc.</td>
-                    </tr>
-                    <tr>
-                        <td>Region_Code</td>
-                        <td>integer</td>
-                        <td>Numeric region code</td>
-                    </tr>
-                    <tr>
-                        <td>Date</td>
-                        <td>date</td>
-                        <td>YYYY-MM-DD format</td>
-                    </tr>
-                    <tr>
-                        <td>Holiday</td>
-                        <td>integer</td>
-                        <td>0 or 1</td>
-                    </tr>
-                    <tr>
-                        <td>Discount</td>
-                        <td>integer/string</td>
-                        <td>0/1 or Yes/No</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="test-section">
-            <h2>🧪 Test the API</h2>
-            <p>Click the button below to test the health check endpoint:</p>
-            <button class="btn" onclick="testHealthCheck()">Test Health Check</button>
-            <div id="testResult"></div>
-        </div>
-        
-        <h2>📦 Example Usage</h2>
-        
-        <h3>Python (requests)</h3>
-        <pre><code>import requests
-import json
-
-# Single prediction
-url = "http://localhost:5000/predict"
-data = {
-    "Store_id": "S001",
-    "Store_Type": "A",
-    "Location_Type": "Urban",
-    "Region_Code": 1,
-    "Date": "2024-01-15",
-    "Holiday": 0,
-    "Discount": 1
-}
-
-response = requests.post(url, json=data)
-print(response.json())</code></pre>
-
-        <h3>cURL</h3>
-        <pre><code>curl -X POST http://localhost:5000/predict \
-  -H "Content-Type: application/json" \
-  -d '{
-    "Store_id": "S001",
-    "Store_Type": "A",
-    "Location_Type": "Urban",
-    "Region_Code": 1,
-    "Date": "2024-01-15",
-    "Holiday": 0,
-    "Discount": 1
-  }'</code></pre>
     </div>
-    
+
     <script>
-        async function testHealthCheck() {
-            const resultDiv = document.getElementById('testResult');
-            resultDiv.style.display = 'block';
-            resultDiv.className = '';
-            resultDiv.innerHTML = 'Testing...';
+        document.getElementById('predictionForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                Store_id: document.getElementById('Store_id').value,
+                Store_Type: document.getElementById('Store_Type').value,
+                Location_Type: document.getElementById('Location_Type').value,
+                Region_Code: document.getElementById('Region_Code').value,
+                Date: document.getElementById('Date').value,
+                Holiday: parseInt(document.getElementById('Holiday').value),
+                Discount: parseInt(document.getElementById('Discount').value)
+            };
             
-            try {
-                const response = await fetch('/health');
-                const data = await response.json();
-                
-                if (response.ok) {
-                    resultDiv.className = 'success';
-                    resultDiv.innerHTML = `
-                        <strong>✓ Success!</strong><br>
-                        Status: ${data.status}<br>
-                        Message: ${data.message}<br>
-                        Model Loaded: ${data.model_loaded}
-                    `;
-                } else {
-                    resultDiv.className = 'error';
-                    resultDiv.innerHTML = `
-                        <strong>✗ Error</strong><br>
-                        Status: ${data.status}<br>
-                        Message: ${data.message}
-                    `;
-                }
-            } catch (error) {
-                resultDiv.className = 'error';
-                resultDiv.innerHTML = `
-                    <strong>✗ Error</strong><br>
-                    ${error.message}
-                `;
+            const res = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            if(result.success) {
+                document.getElementById('salesVal').innerText = '₹' + result.prediction.sales.toLocaleString();
+            } else {
+                alert('Error: ' + result.message);
             }
-        }
+        };
     </script>
 </body>
 </html>
